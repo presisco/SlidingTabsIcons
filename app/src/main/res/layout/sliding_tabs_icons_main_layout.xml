@@ -4,15 +4,18 @@
               android:layout_height="match_parent"
               android:orientation="vertical">
 
-    <com.presisco.example.slidingtabsicons.slidingtabsicons.SlidingTabLayout
-          android:id="@+id/sliding_tabs"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content" />
-
     <android.support.v4.view.ViewPager
           android:id="@+id/content_viewpager"
           android:layout_width="match_parent"
           android:layout_height="fill_parent"
-        android:background="@android:color/white" />
+        android:background="@android:color/white"
+        android:layout_weight="1" />
+
+    <com.presisco.example.slidingtabsicons.slidingtabsicons.SlidingTabLayout
+          android:id="@+id/sliding_tabs"
+          android:layout_width="match_parent"
+          android:layout_height="@dimen/tabs_height"
+        android:layout_below="@+id/content_viewpager"
+        android:layout_weight="0" />
 
 </LinearLayout>

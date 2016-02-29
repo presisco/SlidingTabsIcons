@@ -208,6 +208,9 @@ public class SlidingTabsIconsFragment extends Fragment {
                 return mTabs.get(position).getIconRes();
             }
         });
+
+        mSlidingTabLayout.setMonospaced(true);
+
         mSlidingTabLayout.setViewPager(mViewPager);
 
 

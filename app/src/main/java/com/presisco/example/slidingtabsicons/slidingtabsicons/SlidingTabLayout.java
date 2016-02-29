@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -80,7 +81,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private int mTitleOffset;
 
-    private int mTabViewLayoutId;
+    private int mTabViewLayoutId=0;
     private int mTabViewTextViewId;
     private int mTabViewIconId;
 
@@ -199,6 +200,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
         textView.setTypeface(Typeface.DEFAULT_BOLD);
 
+        textView.setLayoutParams(new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             // If we're running on Honeycomb or newer, then we can use the Theme's
             // selectableItemBackground to ensure that the View has a pressed state
@@ -232,14 +236,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 // If there is a custom tab view layout id set, try and inflate it
                 tabView = LayoutInflater.from(getContext()).inflate(mTabViewLayoutId, mTabStrip,
                         false);
-                if(mIsMonoSpaced){
-                    //tabView.setLayoutParams();
-                }else {
-                    tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
-                    tabIconView = (ImageView) tabView.findViewById(mTabViewIconId);
-                    if (tabIconView != null) {
-                        tabIconView.setImageResource(mIconsRes.getIconAt(i));
-                    }
+                tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
+                tabIconView = (ImageView) tabView.findViewById(mTabViewIconId);
+                if (tabIconView != null) {
+                    tabIconView.setImageResource(mIconsRes.getIconAt(i));
                 }
             }
 
@@ -249,6 +249,12 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
             if (tabTitleView == null && TextView.class.isInstance(tabView)) {
                 tabTitleView = (TextView) tabView;
+            }
+
+            if(mIsMonoSpaced){
+                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabView.getLayoutParams();
+                lp.width = 0;
+                lp.weight = 1;
             }
 
             tabTitleView.setText(adapter.getPageTitle(i));
