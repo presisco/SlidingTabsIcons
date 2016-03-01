@@ -22,6 +22,7 @@ import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -70,10 +71,17 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     }
 
+    /**
+     * Allows complete control over the icons in the tab layout. Set with
+     * {@link #setCustomIconsResSet(IconsRes)}
+     */
     public interface IconsRes{
         public List<Integer> getIconsSet();
         public int getIconAt(int position);
+        public int get2ndIconAt(int position);
     }
+
+    private static final String TAG=SlidingTabLayout.class.getSimpleName();
 
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
@@ -93,6 +101,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private final SlidingTabStrip mTabStrip;
 
     private IconsRes mIconsRes;
+
+    private int mLastSelectedTab=-1;
 
     public SlidingTabLayout(Context context) {
         this(context, null);
@@ -185,7 +195,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
         mViewPager = viewPager;
         if (viewPager != null) {
-            viewPager.setOnPageChangeListener(new InternalViewPagerListener());
+            viewPager.addOnPageChangeListener(new InternalViewPagerListener());
             populateTabStrip();
         }
     }
@@ -281,6 +291,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
 
         View selectedChild = mTabStrip.getChildAt(tabIndex);
+
         if (selectedChild != null) {
             int targetScrollX = selectedChild.getLeft() + positionOffset;
 
@@ -288,9 +299,20 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 // If we're not at the first child and are mid-scroll, make sure we obey the offset
                 targetScrollX -= mTitleOffset;
             }
-
             scrollTo(targetScrollX, 0);
+            updateTabStatus(selectedChild, tabIndex);
         }
+    }
+
+    private void updateTabStatus(View v,int position){
+        if(mLastSelectedTab!=-1)
+        ((ImageView)(mTabStrip.getChildAt(mLastSelectedTab))
+                .findViewById(mTabViewIconId))
+                .setImageResource(mIconsRes.getIconAt(mLastSelectedTab));
+
+        ((ImageView)v.findViewById(mTabViewIconId)).setImageResource(mIconsRes.get2ndIconAt(position));
+
+        mLastSelectedTab=position;
     }
 
     private class InternalViewPagerListener implements ViewPager.OnPageChangeListener {
@@ -330,7 +352,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         public void onPageSelected(int position) {
             if (mScrollState == ViewPager.SCROLL_STATE_IDLE) {
                 mTabStrip.onViewPagerPageChanged(position, 0f);
-                scrollToTab(position, 0);
+            //    scrollToTab(position, 0);
             }
 
             if (mViewPagerPageChangeListener != null) {
@@ -345,6 +367,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
         public void onClick(View v) {
             for (int i = 0; i < mTabStrip.getChildCount(); i++) {
                 if (v == mTabStrip.getChildAt(i)) {
+                    Log.d(TAG,"selected tab "+i+" , last selected "+mLastSelectedTab);
+                    updateTabStatus(v, i);
                     mViewPager.setCurrentItem(i);
                     return;
                 }

@@ -47,13 +47,15 @@ public class SlidingTabsIconsFragment extends Fragment {
         private final int mIndicatorColor;
         private final int mDividerColor;
         private final int mIconRes;
+        private final int m2ndIconRes;
 
-        SamplePagerItem(CharSequence title, int indicatorColor, int dividerColor, int iconRes) {
+        SamplePagerItem(CharSequence title, int indicatorColor, int dividerColor, int iconRes, int iconRes2) {
             mTitle = title;
             mIndicatorColor = indicatorColor;
             mDividerColor = dividerColor;
             mIconRes=iconRes;
-        }
+            m2ndIconRes=iconRes2;
+       }
 
         /**
          * @return A new {@link Fragment} to be displayed by a {@link ViewPager}
@@ -86,6 +88,10 @@ public class SlidingTabsIconsFragment extends Fragment {
 
         int getIconRes(){
             return mIconRes;
+        }
+
+        int get2ndIconRes(){
+            return m2ndIconRes;
         }
     }
 
@@ -122,21 +128,24 @@ public class SlidingTabsIconsFragment extends Fragment {
                 "Title1",
                 Color.BLUE,
                 Color.GRAY,
-                R.drawable.tabs_title_icon1
+                R.drawable.tabs_title_icon1,
+                R.drawable.tabs_title_selected1
         ));
 
         mTabs.add(new SamplePagerItem(
                 "Title2",
                 Color.CYAN,
                 Color.BLACK,
-                R.drawable.tabs_title_icon2
+                R.drawable.tabs_title_icon2,
+                R.drawable.tabs_title_selected2
         ));
 
         mTabs.add(new SamplePagerItem(
                 "Title3",
                 Color.GREEN,
                 Color.MAGENTA,
-                R.drawable.tabs_title_icon3
+                R.drawable.tabs_title_icon3,
+                R.drawable.tabs_title_selected3
         ));
 //        mTabs.add(new SamplePagerItem(
 //                getString(R.string.tab_stream), // Title
@@ -206,6 +215,11 @@ public class SlidingTabsIconsFragment extends Fragment {
             @Override
             public int getIconAt(int position) {
                 return mTabs.get(position).getIconRes();
+            }
+
+            @Override
+            public int get2ndIconAt(int position){
+                return mTabs.get(position).get2ndIconRes();
             }
         });
 
